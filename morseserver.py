@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import socketserver
+import sys
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -19,8 +20,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # just send back the same data, but upper-cased
         self.request.sendall(self.data.upper())
 
+if len(sys.argv) !=2:
+    raise ValueError("Bitte Port angeben")
+
+port1 = int(sys.argv[1])
+
 if __name__ == "__main__":
-    HOST, PORT = "0.0.0.0", 9999
+    HOST, PORT = "0.0.0.0", port1
 
     # Create the server, binding to localhost on port 9999
     with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
