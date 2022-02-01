@@ -4,6 +4,15 @@ import socketserver
 import sys
 import codecs
 
+LED0 = 18
+TDOT = 0.2
+TDASH = 3 * TDOT
+
+from gpiozero import LED
+from signal import pause
+
+led = LED(LED0)
+
 morse ={"1" : ".----",
         "2" : "..---",
         "3" : "...--",
@@ -38,12 +47,22 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         MyMorseHandler(self.data)
         # just send back the same data, but upper-cased
         #self.request.sendall(self.data.upper())
-        
+ 
+def blink(symbol):
+    for x in symbol:
+        if x == ".":
+            led.blink(TDOT, TDOT, 1, False)
+            print(x, end="")
+        else:
+            led.blink(TDASH, TDOT, 1, False)
+            print(x, end="")
+ 
 def MyMorseHandler(data):
         try:
             d = codecs.decode(data)   #aus binary code einen string machen
             for zeichen in d:
-                print(morse[zeichen])
+                blink(morse[zeichen])
+                print(" ")
         except KeyError as err:
             print("Nicht im Code enthalten:", err.args[0])
 
